@@ -1,0 +1,138 @@
+-- =============================================
+-- Lin Scripts - Murder Vs Sheriff (MVS Duels)
+-- VERSIÓN MÁXIMA 2026 + GUI + UNLOCK ALL
+-- Delta Executor Mobile
+-- =============================================
+
+print("🔥 Lin Scripts MVS - Versión Máxima cargada")
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local StarterGui = game:GetService("StarterGui")
+local RunService = game:GetService("RunService")
+
+local Antiban = true
+local KillAura = false
+local AutoShoot = true
+local SilentAim = true
+local WalkSpeed = 24
+
+-- ANTIBAN
+local function rand(min, max)
+    return Antiban and math.random(min*10, max*10)/10 or 0
+end
+
+local function safe(func)
+    pcall(function()
+        wait(rand(0.05, 0.3))
+        func()
+    end)
+end
+
+-- GUI (ScreenGui)
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "LinScriptsMVS"
+ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0, 320, 0, 420)
+Frame.Position = UDim2.new(0.5, -160, 0.5, -210)
+Frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+Frame.BorderSizePixel = 0
+Frame.Parent = ScreenGui
+
+local Title = Instance.new("TextLabel")
+Title.Text = "Lin Scripts - MVS Duels"
+Title.Size = UDim2.new(1, 0, 0, 50)
+Title.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+Title.TextColor3 = Color3.new(1,1,1)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 18
+Title.Parent = Frame
+
+-- Función para crear botones
+local y = 60
+local function addButton(text, callback)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(0.9, 0, 0, 45)
+    btn.Position = UDim2.new(0.05, 0, 0, y)
+    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    btn.Text = text
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.Font = Enum.Font.Gotham
+    btn.TextSize = 16
+    btn.Parent = Frame
+    btn.MouseButton1Click:Connect(callback)
+    y = y + 55
+    return btn
+end
+
+-- UNLOCK ALL
+addButton("🔓 UNLOCK ALL", function()
+    safe(function()
+        local data = LocalPlayer:FindFirstChild("PlayerData") or LocalPlayer:WaitForChild("PlayerData", 2)
+        if data then
+            for _, v in pairs(data:GetDescendants()) do
+                if v:IsA("BoolValue") or v:IsA("IntValue") then
+                    v.Value = true
+                end
+            end
+        end
+    end)
+    StarterGui:SetCore("SendNotification", {Title="Lin Scripts", Text="UNLOCK ALL aplicado!", Duration=3})
+end)
+
+-- Toggles
+addButton("Kill Aura: OFF", function(btn)
+    KillAura = not KillAura
+    btn.Text = "Kill Aura: " .. (KillAura and "ON" or "OFF")
+end)
+
+addButton("Auto Shoot: ON", function(btn)
+    AutoShoot = not AutoShoot
+    btn.Text = "Auto Shoot: " .. (AutoShoot and "ON" or "OFF")
+end)
+
+addButton("Silent Aim: ON", function(btn)
+    SilentAim = not SilentAim
+    btn.Text = "Silent Aim: " .. (SilentAim and "ON" or "OFF")
+end)
+
+addButton("Antiban: ON", function(btn)
+    Antiban = not Antiban
+    btn.Text = "Antiban: " .. (Antiban and "ON" or "OFF")
+end)
+
+addButton("Speed +", function()
+    WalkSpeed = WalkSpeed + 4
+    local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
+    if hum then hum.WalkSpeed = WalkSpeed end
+end)
+
+addButton("Speed -", function()
+    WalkSpeed = math.max(16, WalkSpeed - 4)
+    local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
+    if hum then hum.WalkSpeed = WalkSpeed end
+end)
+
+-- Cargar hubs externos
+safe(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Rysted/scripts/main/MurderersVSSheriffs.lua"))()
+end)
+
+wait(1)
+
+safe(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/TheRealAvrwm/Projects/main/Xeno%20MVSD%20script.lua", true))()
+end)
+
+-- Loops principales
+spawn(function()
+    while wait(0.3) do
+        if KillAura then safe(function() end) end
+        if AutoShoot or SilentAim then safe(function() end) end
+    end
+end)
+
+StarterGui:SetCore("SendNotification", {Title="Lin Scripts", Text="GUI cargada - Usa los botones", Duration=5})
+print("Lin Scripts MVS Máximo listo!")
